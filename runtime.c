@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 	/*
 	 * TODO:
 	 * - Options to extract lupkg
+	 * - Handle cleanup on kill
 	 */
 
 	char *cmd;
