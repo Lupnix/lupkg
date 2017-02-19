@@ -1,4 +1,4 @@
-*.gz
+*.sfs
 *.lupkg
 /header
 /runtime

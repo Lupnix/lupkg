@@ -9,16 +9,16 @@ header: check_runtime
 	dd if=/dev/zero of=./header bs=1 count=$(HEADER_SIZE)
 	dd if=./runtime of=./header conv=notrunc
 
-test.tar.gz:
-	tar -czf test.tar.gz ./app
+app.sfs:
+	mksquashfs ./app ./app.sfs
 
-test.lupkg: header test.tar.gz
-	cat ./header > test.lupkg
-	cat ./test.tar.gz >> test.lupkg
-	chmod +x ./test.lupkg
+app.lupkg: header app.sfs
+	cat ./header > app.lupkg
+	cat ./app.sfs >> app.lupkg
+	chmod +x ./app.lupkg
 
 clean:
-	rm -rf ./runtime ./header ./test.tar.gz ./test.lupkg
+	rm -rf ./runtime ./header ./app.sfs ./app.lupkg
 
-test: test.lupkg
-	./test.lupkg
+test: app.lupkg
+	sudo ./app.lupkg
