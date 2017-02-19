@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
-#define RUN_PATH "/run"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 char *mkdtemp(char *template); /* Redeclaring to silence warning */
 
@@ -12,8 +12,11 @@ int mount_lupkg(char *srcpath, char *destpath)
 {
 	/*
 	 * The header where the runtime is injected is 64K (i.e. 65536 bytes).
-	 * When extracing skip over these bytes to get to the file.
+	 * When mounting skip over these bytes to get to the file.
+	 *
+	 * TODO: use fuse to mount/umount
 	 */
+
 	int status;
 	size_t size = strlen(srcpath) + strlen(destpath) + 100;
 	char *cmd = malloc(size);
@@ -28,28 +31,21 @@ int mount_lupkg(char *srcpath, char *destpath)
 	strcat(cmd, destpath);
 	strcat(cmd, " -t squashfs -o ro,loop,offset=65536");
 
-	/* mount the program */
 	status = system(cmd);
 	free(cmd);
+
 	return status;
 }
 
-int run_lupkg(char *lupkg_dir)
+int run_lupkg(char *lupkg_dir, char *argv[])
 {
 	int status;
-	char *run_path = RUN_PATH;
-	char *cmd = malloc(strlen(lupkg_dir) + strlen(run_path) + 1);
-
-	if (cmd == NULL) {
-		return 1;
-	}
+	char cmd[25] = {0};
 
 	strcpy(cmd, lupkg_dir);
-	strcat(cmd, run_path);
-	status = system(cmd);
-	free(cmd);
+	strcat(cmd, "/run");
 
-	return status;
+	return execvp(cmd, argv);
 }
 
 int cleanup_lupkg(char *lupkg_dir)
@@ -63,8 +59,10 @@ int cleanup_lupkg(char *lupkg_dir)
 
 	strcpy(cmd, "umount -f ");
 	strcat(cmd, lupkg_dir);
+
 	status = system(cmd);
 	free(cmd);
+
 	rmdir(lupkg_dir);
 
 	return status;
@@ -72,32 +70,33 @@ int cleanup_lupkg(char *lupkg_dir)
 
 int main(int argc, char* argv[])
 {
-	/*
-	 * TODO:
-	 * - Options to mount lupkg
-	 * - Handle cleanup on kill
-	 */
-
 	char *cmd;
 	char lupkg_dir[] = "/tmp/.lupkg_XXXXXX";
 	int status = 0;
+	pid_t pid;
 
 	if (mkdtemp(lupkg_dir) == NULL) {
 		fprintf(stderr, "Could not make package dir\n");
-		exit(1);
+		return 1;
 	}
 
 	if ((status = mount_lupkg(argv[0], lupkg_dir))) {
 		fprintf(stderr, "Could not mount package\n");
-		goto cleanup_and_exit;
+		cleanup_lupkg(lupkg_dir);
+		return status;
 	}
 
-	if ((status = run_lupkg(lupkg_dir))) {
-		fprintf(stderr, "Could not run package\n");
-		goto cleanup_and_exit;
+	pid = fork();
+
+	if(pid == 0) {
+		if ((status = run_lupkg(lupkg_dir, argv))) {
+			fprintf(stderr, "Could not run package\n");
+		}
+
+		return status;
 	}
 
-cleanup_and_exit:
+	waitpid(pid, &status, 0);
 	cleanup_lupkg(lupkg_dir);
 	return status;
 }
