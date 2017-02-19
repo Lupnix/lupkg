@@ -1,13 +1,16 @@
 # Lupkg
+This is still a work in progress, but the goal is to have a simple packaging
+tool to group deps together in a single executable.
 
 ## TODO:
-* lupkg init   create basic app/run
-* usage and better error checking
+* usage, comand line options, and better error checking
 * use fuse for squashfs
-* lupkg build -o foo.lupkg to name the output file
-* lupkg build ./folder to name the input folder
+* a lot more...
 
 ## Required Commands:
 * mount
 * umount
 * mksquashfs
+
+## Authors
+* Braxton Plaxco
