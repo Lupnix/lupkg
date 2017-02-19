@@ -12,6 +12,9 @@
 extern const unsigned char _binary_header_start[];
 extern const unsigned char _binary_header_end[];
 
+extern const unsigned char _binary_run_start[];
+extern const unsigned char _binary_run_end[];
+
 int lupkg_build(int argc, char *argv[])
 {
 	FILE *pkg, *app_fs;
@@ -67,6 +70,7 @@ int lupkg_build(int argc, char *argv[])
 int lupkg_init(int argc, char *argv[])
 {
 	DIR *app = opendir("./app/");
+	size_t run_len = _binary_run_end - _binary_run_start;
 	FILE *run;
 
 	if (app) {
@@ -84,7 +88,10 @@ int lupkg_init(int argc, char *argv[])
 		die("Could not open run file!");
 	}
 
-	fprintf(run, "#! /bin/bash\n\necho \"Hello, World!\"\n");
+	for (int i = 0; i < run_len; i++) {
+		fputc(_binary_run_start[i], run);
+	}
+
 	fclose(run);
 
 	if (chmod("./app/run", 0777)) {

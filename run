@@ -1,0 +1,14 @@
+#! /bin/bash
+
+APPDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export PATH="$APPDIR/usr/bin/:$APPDIR/usr/sbin/:$APPDIR/usr/games/:$APPDIR/bin/:$APPDIR/sbin/:$PATH"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib/:$APPDIR/usr/lib/i386-linux-gnu/:$APPDIR/usr/lib/x86_64-linux-gnu/:$APPDIR/usr/lib32/:$APPDIR/usr/lib64/:$APPDIR/lib/:$APPDIR/lib/i386-linux-gnu/:$APPDIR/lib/x86_64-linux-gnu/:$APPDIR/lib32/:$APPDIR/lib64/:$LD_LIBRARY_PATH"
+export PYTHONPATH="$APPDIR/usr/share/pyshared/:$PYTHONPATH"
+export XDG_DATA_DIRS="$APPDIR/usr/share/:$APPDIR"
+export PERLLIB="$APPDIR/usr/share/perl5/:$APPDIR/usr/lib/perl5/:$PERLLIB"
+export GSETTINGS_SCHEMA_DIR="$APPDIR/usr/share/glib-2.0/schemas/:$GSETTINGS_SCHEMA_DIR"
+export QT_PLUGIN_PATH="$APPDIR/usr/lib/qt4/plugins/:$APPDIR/usr/lib/i386-linux-gnu/qt4/plugins/:$APPDIR/usr/lib/x86_64-linux-gnu/qt4/plugins/:$APPDIR/usr/lib32/qt4/plugins/:$APPDIR/usr/lib64/qt4/plugins/:$APPDIR/usr/lib/qt5/plugins/:$APPDIR/usr/lib/i386-linux-gnu/qt5/plugins/:$APPDIR/usr/lib/x86_64-linux-gnu/qt5/plugins/:$APPDIR/usr/lib32/qt5/plugins/:$APPDIR/usr/lib64/qt5/plugins/:$QT_PLUGIN_PATH"
+
+
+echo "Hello, World!"

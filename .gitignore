@@ -1,6 +1,8 @@
-*.sfs
 *.lupkg
-/header
-/runtime
+*.o
+*.sfs
 /app
 /build
+/header
+/lupkg
+/runtime
