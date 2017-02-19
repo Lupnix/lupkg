@@ -5,14 +5,14 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
-
+#include <unistd.h>
 
 #define die(msg) fprintf(stderr, "%s\n", msg); exit(1)
 
 extern const unsigned char _binary_header_start[];
 extern const unsigned char _binary_header_end[];
 
-void lupkg_build(int argc, char *argv[])
+int lupkg_build(int argc, char *argv[])
 {
 	FILE *pkg, *app_fs;
 	DIR *build = opendir("./build/");
@@ -21,16 +21,16 @@ void lupkg_build(int argc, char *argv[])
 
 	if (build) {
 		closedir(build);
+		unlink("./build/app.fs");
 	} else if (ENOENT == errno) {
 		if(mkdir("./build/", S_IRWXU | S_IRWXG | S_IRWXO)) {
-			die("Could not create build dir!");
+			die("Could not create build directory!");
 		}
 	}
 
 	if (system("mksquashfs ./app/ ./build/app.fs > /dev/null")) {
 		die("Could not create app file system!");
 	}
-
 
 	pkg = fopen("./build/app.lupkg", "w");
 
@@ -60,20 +60,56 @@ void lupkg_build(int argc, char *argv[])
 	if (chmod("./build/app.lupkg", 0777)) {
 		die("Could not make package executable!");
 	}
+
+	return 0;
 }
 
-
-int main(int argc, char *argv[])
+int lupkg_init(int argc, char *argv[])
 {
-	if (argc < 2) {
-		die("Usage: lupkg [build]");
+	DIR *app = opendir("./app/");
+	FILE *run;
+
+	if (app) {
+		closedir(app);
+		die("The app directory already exists!");
+	} else if (ENOENT == errno) {
+		if(mkdir("./app/", S_IRWXU | S_IRWXG | S_IRWXO)) {
+			die("Could not create app directory!");
+		}
 	}
 
-	if (!strcmp(argv[1], "build")) {
-		lupkg_build(argc, argv);
-	} else {
-		die("Usage: lupkg [build]");
+	run = fopen("./app/run", "w");
+
+	if (run == NULL) {
+		die("Could not open run file!");
+	}
+
+	fprintf(run, "#! /bin/bash\n\necho \"Hello, World!\"\n");
+	fclose(run);
+
+	if (chmod("./app/run", 0777)) {
+		die("Could not make run executable!");
 	}
 
 	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	int status = 0;
+
+	if (argc < 2) {
+		die("Usage: lupkg [build|init]");
+	}
+
+	if (!strcmp(argv[1], "build")) {
+		status = lupkg_build(argc, argv);
+	} else if (!strcmp(argv[1], "init")) {
+		status = lupkg_init(argc, argv);
+	} else {
+		die("Usage: lupkg [build|init]");
+	}
+
+	printf("%s complete!\n", argv[1]);
+	return status;
 }

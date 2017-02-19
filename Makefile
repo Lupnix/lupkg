@@ -15,11 +15,15 @@ header.o: header
 	ld -r -b binary -o header.o header
 
 clean:
-	@rm -rf ./runtime ./header *.o ./lupkg ./build
+	@rm -rf ./runtime ./header *.o ./lupkg ./build ./app
 
 lupkg: header.o
 	$(CC) -o lupkg header.o lupkg.c
 
-test: lupkg
+install:
+	cp ./lupkg $(DESTDIR)/usr/bin/lupkg
+
+test: clean lupkg
+	./lupkg init
 	./lupkg build
 	sudo ./build/app.lupkg

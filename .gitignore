@@ -2,3 +2,5 @@
 *.lupkg
 /header
 /runtime
+/app
+/build
