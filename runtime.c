@@ -25,12 +25,7 @@ int mount_lupkg(char *srcpath, char *destpath)
 		return 1;
 	}
 
-	strcpy(cmd, "mount ");
-	strcat(cmd, srcpath);
-	strcat(cmd, " ");
-	strcat(cmd, destpath);
-	strcat(cmd, " -t squashfs -o ro,loop,offset=65536");
-
+	sprintf(cmd, "squashfuse -o offset=65536 %s %s", srcpath, destpath);
 	status = system(cmd);
 	free(cmd);
 
@@ -42,8 +37,7 @@ int run_lupkg(char *lupkg_dir, char *argv[])
 	int status;
 	char cmd[25] = {0};
 
-	strcpy(cmd, lupkg_dir);
-	strcat(cmd, "/run");
+	sprintf(cmd, "%s/run", lupkg_dir);
 
 	return execvp(cmd, argv);
 }
@@ -57,9 +51,7 @@ int cleanup_lupkg(char *lupkg_dir)
 		return 1;
 	}
 
-	strcpy(cmd, "umount -f ");
-	strcat(cmd, lupkg_dir);
-
+	sprintf(cmd, "fusermount -u %s", lupkg_dir);
 	status = system(cmd);
 	free(cmd);
 

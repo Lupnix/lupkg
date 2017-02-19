@@ -29,4 +29,4 @@ install:
 test: clean lupkg
 	./lupkg init
 	./lupkg build
-	sudo ./build/app.lupkg
+	./build/app.lupkg

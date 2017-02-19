@@ -2,10 +2,15 @@
 This is still a work in progress, but the goal is to have a simple packaging
 tool to group deps together in a single executable.
 
-## Required Commands:
-* mount
-* umount
+## Required Commands For Build:
 * mksquashfs
+
+## Required Commands For Runtime:
+* [squashfuse](https://github.com/vasi/squashfuse/)
+* fusermount
+
+(NOTE: squashfuse and/or fusermount might go away when I get a chance to code the
+functionality myself)
 
 ## Installing
 ```
