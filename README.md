@@ -6,11 +6,7 @@ tool to group deps together in a single executable.
 * mksquashfs
 
 ## Required Commands For Runtime:
-* [squashfuse](https://github.com/vasi/squashfuse/)
 * fusermount
-
-(NOTE: squashfuse and/or fusermount might go away when I get a chance to code the
-functionality myself)
 
 ## Installing
 ```

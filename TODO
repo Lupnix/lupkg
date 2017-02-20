@@ -1,0 +1,4 @@
+* remove TMPHACK with squashfuse
+* move some assignment into if statements
+* cleanup dep process
+* use the idea of fakechroot to handle /etc/ and other resources not controled by a path

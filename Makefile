@@ -1,6 +1,12 @@
-HEADER_SIZE = 65536
+HEADER_SIZE = 1000000
 
 all: lupkg
+
+squashfuse.o:
+	ld -r -b binary -o squashfuse.o squashfuse
+
+runtime: squashfuse.o
+	$(CC) -o runtime squashfuse.o runtime.c
 
 check_runtime: runtime
 	@if [ "$(shell stat --printf="%s" ./runtime)" -gt "$(HEADER_SIZE)" ]; \

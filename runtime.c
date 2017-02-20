@@ -5,13 +5,18 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 char *mkdtemp(char *template); /* Redeclaring to silence warning */
+
+/* TMPHACK */
+extern const unsigned char _binary_squashfuse_start[];
+extern const unsigned char _binary_squashfuse_end[];
 
 int mount_lupkg(char *srcpath, char *destpath)
 {
 	/*
-	 * The header where the runtime is injected is 64K (i.e. 65536 bytes).
+	 * The header where the runtime is injected is 64K (i.e. 1000000 bytes).
 	 * When mounting skip over these bytes to get to the file.
 	 *
 	 * TODO: use fuse to mount/umount
@@ -20,15 +25,31 @@ int mount_lupkg(char *srcpath, char *destpath)
 	int status;
 	size_t size = strlen(srcpath) + strlen(destpath) + 100;
 	char *cmd = malloc(size);
+	char squashfuse_tmp[] = "/tmp/squashfuse.XXXXXX";
+	size_t len = _binary_squashfuse_end - _binary_squashfuse_start;
+	FILE *squashfuse;
 
 	if (cmd == NULL) {
 		return 1;
 	}
 
-	sprintf(cmd, "squashfuse -o offset=65536 %s %s", srcpath, destpath);
+
+	/* TMPHACK */
+	mktemp(squashfuse_tmp);
+	squashfuse = fopen(squashfuse_tmp, "w");
+	for (int i = 0; i < len; i++) {
+		fputc(_binary_squashfuse_start[i], squashfuse);
+	}
+	fclose(squashfuse);
+	chmod(squashfuse_tmp, 0777);
+
+	sprintf(cmd, "%s -o offset=1000000 %s %s",
+		squashfuse_tmp, srcpath, destpath);
+
 	status = system(cmd);
 	free(cmd);
 
+	unlink(squashfuse_tmp);
 	return status;
 }
 
