@@ -20,14 +20,14 @@ header: check_runtime
 header.o: header
 	ld -r -b binary -o header.o header
 
-run.o:
-	ld -r -b binary -o run.o run
+app_run.o:
+	ld -r -b binary -o app_run.o app_run
 
 clean:
 	@rm -rf ./runtime ./header *.o ./lupkg ./build ./app
 
-lupkg: header.o run.o
-	$(CC) -o lupkg header.o run.o lupkg.c
+lupkg: header.o app_run.o
+	$(CC) -o lupkg header.o app_run.o lupkg.c
 
 install:
 	cp ./lupkg $(DESTDIR)/usr/bin/lupkg
