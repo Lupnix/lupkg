@@ -22,7 +22,7 @@ lupkg init
 lupkg build
 sudo ./build/app.lupkg
 
-# edit ./app/run, add files, etc...
+# edit ./app/app_run, add files, etc...
 
 lupkg build
 sudo ./build/app.lupkg
