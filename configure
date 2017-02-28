@@ -1,0 +1,4 @@
+#! /usr/bin/sh
+
+echo -n "checking for squashfuse... "
+(which squashfuse 2> /dev/null > /dev/null && echo "yes") || echo "no"

@@ -2,7 +2,11 @@ HEADER_SIZE = 1000000
 
 all: lupkg
 
-squashfuse.o:
+squashfuse:
+	# Make sure that you have squashfuse built and in your path
+	cp `which $@` ./$@
+
+squashfuse.o: squashfuse
 	ld -r -b binary -o squashfuse.o squashfuse
 
 runtime: squashfuse.o
@@ -24,7 +28,7 @@ app_run.o:
 	ld -r -b binary -o app_run.o app_run
 
 clean:
-	@rm -rf ./runtime ./header *.o ./lupkg ./build ./app
+	@rm -rf ./runtime ./header *.o ./lupkg ./build ./app ./squashfuse
 
 lupkg: header.o app_run.o
 	$(CC) -o lupkg header.o app_run.o lupkg.c
