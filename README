@@ -1,21 +1,23 @@
-# Lupkg
+                                     lupkg
+
 This is still a work in progress, but the goal is to have a simple packaging
 tool to group deps together in a single executable.
 
-## Required Commands For Build:
+BUILD REQUIREMENTS
+
 * mksquashfs
 
-## Required Commands For Runtime:
+RUNTIME REQUIREMENTS
+
 * fusermount
 
-## Installing
-```
+INSTALLING
+
 make
 sudo make install
-```
 
-## Usage
-```
+USAGE
+
 mkdir myproject
 cd ./myproject
 lupkg init
@@ -28,12 +30,9 @@ lupkg build
 
 # run the package
 ./build/app.lupkg
-```
 
-## TODO:
+TODO
+
 * usage, comand line options, and better error checking
 * use fuse for squashfs
 * a lot more...
-
-## Authors
-* Braxton Plaxco
