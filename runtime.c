@@ -85,15 +85,18 @@ int main(int argc, char* argv[])
 {
 	char *cmd;
 	char lupkg_dir[] = "/tmp/.lupkg_XXXXXX";
+	char srcpath[1024];
 	int status = 0;
 	pid_t pid;
+
+	readlink("/proc/self/exe", srcpath, 1024);
 
 	if (mkdtemp(lupkg_dir) == NULL) {
 		fprintf(stderr, "Could not make package dir\n");
 		return 1;
 	}
 
-	if ((status = mount_lupkg(argv[0], lupkg_dir))) {
+	if ((status = mount_lupkg(srcpath, lupkg_dir))) {
 		fprintf(stderr, "Could not mount package\n");
 		cleanup_lupkg(lupkg_dir);
 		return status;
