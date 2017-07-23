@@ -58,7 +58,7 @@ int run_lupkg(char *lupkg_dir, char *argv[])
 	int status;
 	char cmd[25] = {0};
 
-	sprintf(cmd, "%s/app_run", lupkg_dir);
+	sprintf(cmd, "%s/init", lupkg_dir);
 
 	return execvp(cmd, argv);
 }

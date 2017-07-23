@@ -24,14 +24,14 @@ header: check_runtime
 header.o: header
 	ld -r -b binary -o header.o header
 
-app_run.o:
-	ld -r -b binary -o app_run.o app_run
+init.o:
+	ld -r -b binary -o init.o init
 
 clean:
 	@rm -rf ./runtime ./header *.o ./lupkg ./build ./app ./squashfuse
 
-lupkg: header.o app_run.o
-	$(CC) -o lupkg header.o app_run.o lupkg.c
+lupkg: header.o init.o
+	$(CC) -o lupkg header.o init.o lupkg.c
 
 install:
 	cp ./lupkg $(DESTDIR)/usr/bin/lupkg

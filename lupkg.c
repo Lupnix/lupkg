@@ -12,8 +12,8 @@
 extern const unsigned char _binary_header_start[];
 extern const unsigned char _binary_header_end[];
 
-extern const unsigned char _binary_app_run_start[];
-extern const unsigned char _binary_app_run_end[];
+extern const unsigned char _binary_init_start[];
+extern const unsigned char _binary_init_end[];
 
 int lupkg_build(int argc, char *argv[])
 {
@@ -70,8 +70,8 @@ int lupkg_build(int argc, char *argv[])
 int lupkg_init(int argc, char *argv[])
 {
 	DIR *app = opendir("./app/");
-	size_t app_run_len = _binary_app_run_end - _binary_app_run_start;
-	FILE *app_run;
+	size_t init_len = _binary_init_end - _binary_init_start;
+	FILE *init;
 
 	if (app) {
 		closedir(app);
@@ -82,20 +82,20 @@ int lupkg_init(int argc, char *argv[])
 		}
 	}
 
-	app_run = fopen("./app/app_run", "w");
+	init = fopen("./app/init", "w");
 
-	if (app_run == NULL) {
-		die("Could not open app_run file!");
+	if (init == NULL) {
+		die("Could not open init file!");
 	}
 
-	for (int i = 0; i < app_run_len; i++) {
-		fputc(_binary_app_run_start[i], app_run);
+	for (int i = 0; i < init_len; i++) {
+		fputc(_binary_init_start[i], init);
 	}
 
-	fclose(app_run);
+	fclose(init);
 
-	if (chmod("./app/app_run", 0777)) {
-		die("Could not make app_run executable!");
+	if (chmod("./app/init", 0777)) {
+		die("Could not make init executable!");
 	}
 
 	return 0;
