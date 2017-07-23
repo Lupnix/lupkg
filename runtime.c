@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 {
 	char *cmd;
 	char lupkg_dir[] = "/tmp/.lupkg_XXXXXX";
-	char srcpath[1024];
+	char srcpath[1024] = {0};
 	int status = 0;
 	pid_t pid;
 
